@@ -1,15 +1,30 @@
 <?php
-
+/**
+ * 変数の中身の詳細をvar_dumpで確認し、それ以降のスクリプトの実行を停止
+ * 
+ * @param $var 確認したい変数 
+ */
 function dd($var){
   var_dump($var);
   exit();
 }
 
+/**
+ * 指定のURLにリダイレクト
+ * 
+ * @param str $url リダイレクト先のURL
+ */
 function redirect_to($url){
   header('Location: ' . $url);
   exit;
 }
 
+/**
+ * getメソッドでデータが送信された場合、データを取得
+ * 
+ * @param $name getメソッドで送信されたデータ
+ * @return getメソッドで送信されたデータ
+ */
 function get_get($name){
   if(isset($_GET[$name]) === true){
     return $_GET[$name];
@@ -17,6 +32,12 @@ function get_get($name){
   return '';
 }
 
+/**
+ * postメソッドでデータが送信された場合、データを取得
+ * 
+ * @param $name postメソッドで送信されたデータ
+ * @return postメソッドで送信されたデータ
+ */
 function get_post($name){
   if(isset($_POST[$name]) === true){
     return $_POST[$name];
@@ -24,6 +45,12 @@ function get_post($name){
   return '';
 }
 
+/**
+ * ファイルが送信された場合、データを取得
+ * 
+ * @param $name 送信されたファイル
+ * @return 送信されたファイル
+ */
 function get_file($name){
   if(isset($_FILES[$name]) === true){
     return $_FILES[$name];
@@ -31,6 +58,14 @@ function get_file($name){
   return array();
 }
 
+/**
+ * セッション変数がセットされている場合、セッション変数を取得
+ * 
+ * セッション変数がセットされていない場合、空で返す。
+ * 
+ * @param str $name ユーザーID
+ * @return str セットされているセッション変数
+ */
 function get_session($name){
   if(isset($_SESSION[$name]) === true){
     return $_SESSION[$name];
@@ -38,10 +73,19 @@ function get_session($name){
   return '';
 }
 
+/**
+ * セッション変数をセット
+ * 
+ * @param $name セッション変数名
+ * @param $value  セッション変数にセットする値
+ */
 function set_session($name, $value){
   $_SESSION[$name] = $value;
 }
 
+/**
+ * 
+ */
 function set_error($error){
   $_SESSION['__errors'][] = $error;
 }
@@ -72,6 +116,11 @@ function get_messages(){
   return $messages;
 }
 
+/**
+ * セッション変数を確認し、ログインチェック
+ * 
+ * @return str セッション変数がセットされていない場合のみ、空で返す
+ */
 function is_logined(){
   return get_session('user_id') !== '';
 }

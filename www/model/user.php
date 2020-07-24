@@ -1,7 +1,16 @@
 <?php
+// 汎用関数ファイルを読み込み
 require_once MODEL_PATH . 'functions.php';
+// DBに関する関数ファイルを読み込み
 require_once MODEL_PATH . 'db.php';
 
+/**
+ * usersテーブルから指定のユーザーIDのデータを取得
+ * 
+ * @param obj $db PDO
+ * @param int $user_id ユーザーID
+ * @return array 結果配列データ
+ */
 function get_user($db, $user_id){
   $sql = "
     SELECT
@@ -45,6 +54,14 @@ function login_as($db, $name, $password){
   return $user;
 }
 
+/**
+ * ログインユーザーのデータを取得
+ * 
+ * ログインユーザーのユーザーIDをチェックし、
+ * usersテーブルからログインユーザーのデータを取得
+ * 
+ * @param obj $db PDO
+ */
 function get_login_user($db){
   $login_user_id = get_session('user_id');
 
