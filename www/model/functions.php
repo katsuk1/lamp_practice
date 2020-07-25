@@ -84,7 +84,9 @@ function set_session($name, $value){
 }
 
 /**
+ * セッション変数にエラーを保存
  * 
+ * @param str $error エラー文
  */
 function set_error($error){
   $_SESSION['__errors'][] = $error;
@@ -152,12 +154,25 @@ function delete_image($filename){
 }
 
 
-
+/**
+ * 文字列の長さのバリデーション
+ * 
+ * @param $string バリデーションする文字列
+ * @param $minimum_length 最小値
+ * @param $maximum_length 最大値
+ * @return bool 最小値以上最大値以上ならばtrue
+ */
 function is_valid_length($string, $minimum_length, $maximum_length = PHP_INT_MAX){
   $length = mb_strlen($string);
   return ($minimum_length <= $length) && ($length <= $maximum_length);
 }
 
+/**
+ * 半角英数字のバリデーション
+ * 
+ * @param str $string チェック前文字列
+ * @return int 正規表現のパターンにマッチした場合は1,しなかった場合は0
+ */
 function is_alphanumeric($string){
   return is_valid_format($string, REGEXP_ALPHANUMERIC);
 }
@@ -166,6 +181,13 @@ function is_positive_integer($string){
   return is_valid_format($string, REGEXP_POSITIVE_INTEGER);
 }
 
+/**
+ * バリデーションのための正規表現フォーマット
+ * 
+ * @param str $string チェックしたい文字列
+ * @param str $format 正規表現
+ * @return int 正規表現のパターンにマッチした場合は1,しなかった場合は0
+ */
 function is_valid_format($string, $format){
   return preg_match($format, $string) === 1;
 }

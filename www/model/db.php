@@ -59,6 +59,14 @@ function fetch_all_query($db, $sql, $params = array()){
   return false;
 }
 
+/**
+ * クエリを実行
+ * 
+ * @param obj $db PDO
+ * @param str $sql クエリ
+ * @param array $params 空の配列
+ * return クエリ実行結果
+ */
 function execute_query($db, $sql, $params = array()){
   try{
     $statement = $db->prepare($sql);

@@ -1,7 +1,16 @@
 <?php 
+// 汎用関数ファイルを読み込み
 require_once MODEL_PATH . 'functions.php';
+// dbデータに関する関数ファイルを読み込み
 require_once MODEL_PATH . 'db.php';
 
+/**
+ * ログインユーザーのカートデータを配列で取得
+ * 
+ * @param obj $db PDO
+ * @param int $user_id ユーザーID
+ * @return array 結果配列データ 
+ */
 function get_user_carts($db, $user_id){
   $sql = "
     SELECT
