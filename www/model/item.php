@@ -22,6 +22,13 @@ function get_item($db, $item_id){
   return fetch_query($db, $sql);
 }
 
+/**
+ * ステータスが公開の商品データを配列で取得
+ * 
+ * @param obj $db PDO
+ * @param bool $is_open フラグ
+ * @return array 結果配列データ
+ */
 function get_items($db, $is_open = false){
   $sql = '
     SELECT
@@ -47,6 +54,12 @@ function get_all_items($db){
   return get_items($db);
 }
 
+/**
+ * ステータスが公開の商品データを配列で取得
+ * 
+ * @param obj $db PDO
+ * @return array 結果配列データ
+ */
 function get_open_items($db){
   return get_items($db, true);
 }

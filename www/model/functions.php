@@ -1,15 +1,30 @@
 <?php
-
+/**
+ * 変数の中身の詳細をvar_dumpで確認し、それ以降のスクリプトの実行を停止
+ * 
+ * @param $var 確認したい変数 
+ */
 function dd($var){
   var_dump($var);
   exit();
 }
 
+/**
+ * 指定のURLにリダイレクト
+ * 
+ * @param str $url リダイレクト先のURL
+ */
 function redirect_to($url){
   header('Location: ' . $url);
   exit;
 }
 
+/**
+ * getメソッドでデータが送信された場合、データを取得
+ * 
+ * @param $name getメソッドで送信されたデータ
+ * @return getメソッドで送信されたデータ
+ */
 function get_get($name){
   if(isset($_GET[$name]) === true){
     return $_GET[$name];
@@ -17,6 +32,12 @@ function get_get($name){
   return '';
 }
 
+/**
+ * postメソッドでデータが送信された場合、データを取得
+ * 
+ * @param $name postメソッドで送信されたデータ
+ * @return postメソッドで送信されたデータ
+ */
 function get_post($name){
   if(isset($_POST[$name]) === true){
     return $_POST[$name];
@@ -24,6 +45,12 @@ function get_post($name){
   return '';
 }
 
+/**
+ * ファイルが送信された場合、データを取得
+ * 
+ * @param $name 送信されたファイル
+ * @return 送信されたファイル
+ */
 function get_file($name){
   if(isset($_FILES[$name]) === true){
     return $_FILES[$name];
@@ -31,6 +58,14 @@ function get_file($name){
   return array();
 }
 
+/**
+ * セッション変数がセットされている場合、セッション変数を取得
+ * 
+ * セッション変数がセットされていない場合、空で返す。
+ * 
+ * @param str $name ユーザーID
+ * @return str セットされているセッション変数
+ */
 function get_session($name){
   if(isset($_SESSION[$name]) === true){
     return $_SESSION[$name];
@@ -38,10 +73,21 @@ function get_session($name){
   return '';
 }
 
+/**
+ * セッション変数をセット
+ * 
+ * @param $name セッション変数名
+ * @param $value  セッション変数にセットする値
+ */
 function set_session($name, $value){
   $_SESSION[$name] = $value;
 }
 
+/**
+ * セッション変数にエラーを保存
+ * 
+ * @param str $error エラー文
+ */
 function set_error($error){
   $_SESSION['__errors'][] = $error;
 }
@@ -72,6 +118,11 @@ function get_messages(){
   return $messages;
 }
 
+/**
+ * セッション変数を確認し、ログインチェック
+ * 
+ * @return str セッション変数がセットされていない場合のみ、空で返す
+ */
 function is_logined(){
   return get_session('user_id') !== '';
 }
@@ -103,12 +154,25 @@ function delete_image($filename){
 }
 
 
-
+/**
+ * 文字列の長さのバリデーション
+ * 
+ * @param $string バリデーションする文字列
+ * @param $minimum_length 最小値
+ * @param $maximum_length 最大値
+ * @return bool 最小値以上最大値以上ならばtrue
+ */
 function is_valid_length($string, $minimum_length, $maximum_length = PHP_INT_MAX){
   $length = mb_strlen($string);
   return ($minimum_length <= $length) && ($length <= $maximum_length);
 }
 
+/**
+ * 半角英数字のバリデーション
+ * 
+ * @param str $string チェック前文字列
+ * @return int 正規表現のパターンにマッチした場合は1,しなかった場合は0
+ */
 function is_alphanumeric($string){
   return is_valid_format($string, REGEXP_ALPHANUMERIC);
 }
@@ -117,6 +181,13 @@ function is_positive_integer($string){
   return is_valid_format($string, REGEXP_POSITIVE_INTEGER);
 }
 
+/**
+ * バリデーションのための正規表現フォーマット
+ * 
+ * @param str $string チェックしたい文字列
+ * @param str $format 正規表現
+ * @return int 正規表現のパターンにマッチした場合は1,しなかった場合は0
+ */
 function is_valid_format($string, $format){
   return preg_match($format, $string) === 1;
 }
