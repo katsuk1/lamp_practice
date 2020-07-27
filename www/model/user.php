@@ -5,7 +5,7 @@ require_once MODEL_PATH . 'functions.php';
 require_once MODEL_PATH . 'db.php';
 
 /**
- * usersテーブルから指定のユーザーIDのデータを取得
+ * 指定したユーザーIDのユーザーデータを取得
  * 
  * @param obj $db PDO
  * @param int $user_id ユーザーID
@@ -21,11 +21,11 @@ function get_user($db, $user_id){
     FROM
       users
     WHERE
-      user_id = {$user_id}
+      user_id = :user_id
     LIMIT 1
   ";
-
-  return fetch_query($db, $sql);
+  $params = array(':user_id' => $user_id);
+  return fetch_query($db, $sql, $params);
 }
 
 /**
@@ -45,11 +45,11 @@ function get_user_by_name($db, $name){
     FROM
       users
     WHERE
-      name = '{$name}'
+      name = :name
     LIMIT 1
   ";
-
-  return fetch_query($db, $sql);
+  $params = array(':name' => $name); 
+  return fetch_query($db, $sql, $params);
 }
 
 /**
@@ -178,9 +178,9 @@ function insert_user($db, $name, $password){
   $sql = "
     INSERT INTO
       users(name, password)
-    VALUES ('{$name}', '{$password}');
+    VALUES (:name, :password);
   ";
-
-  return execute_query($db, $sql);
+  $params = array(':name' => $name, ':password' => $password);
+  return execute_query($db, $sql, $params);
 }
 
