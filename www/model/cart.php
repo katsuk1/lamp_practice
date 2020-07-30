@@ -37,7 +37,12 @@ function get_user_carts($db, $user_id){
 }
 
 /**
- * 指定のユーザー、指定の商品のカートデータを取得
+ * 指定のユーザーのカート内の指定の商品のデータを取得
+ * 
+ * @param obj $db PDO
+ * @param int $user_id ユーザーID
+ * @param int $item_id 商品ID
+ * @return array 結果配列データ 
  */
 function get_user_cart($db, $user_id, $item_id){
   $sql = "
@@ -69,6 +74,14 @@ function get_user_cart($db, $user_id, $item_id){
 
 /**
  * カートに商品を追加
+ * 
+ * 商品データを取得し、商品が登録されていなければcartテーブルに登録
+ * 登録されていれば、購入数量を+1
+ * 
+ * @param obj $db PDO
+ * @param int $user_id ユーザーID
+ * @param int $item_id 商品ID
+ * @return bool 成功すればtrue
  */
 function add_cart($db, $user_id, $item_id ) {
   $cart = get_user_cart($db, $user_id, $item_id);
@@ -79,7 +92,13 @@ function add_cart($db, $user_id, $item_id ) {
 }
 
 /**
- * カートに商品を1個追加
+ * カートに商品を追加
+ * 
+ * @param obj $db PDO
+ * @param int $user_id ユーザーID
+ * @param int $item_id 商品ID
+ * @param int $amount 購入商品数
+ * @return bool クエリ実行結果
  */
 function insert_cart($db, $user_id, $item_id, $amount = 1){
   $sql = "
@@ -101,7 +120,7 @@ function insert_cart($db, $user_id, $item_id, $amount = 1){
  * @param obj $db PDO
  * @param int $cart_id カートID
  * @param int $amount 購入数
- * @return bool 成功した場合true,失敗した場合false1
+ * @return bool 成功した場合true,失敗した場合false
  */
 function update_cart_amount($db, $cart_id, $amount){
   $sql = "
@@ -162,7 +181,10 @@ function purchase_carts($db, $carts){
 }
 
 /**
- * 指定のユーザーのカートを削除
+ * 指定のユーザーのカート内商品を全て削除
+ * 
+ * @param obj $db PDO
+ * @param int $user_id ユーザーID
  */
 function delete_user_carts($db, $user_id){
   $sql = "
@@ -175,7 +197,12 @@ function delete_user_carts($db, $user_id){
   execute_query($db, $sql, $params);
 }
 
-
+/**
+ * カート内商品の合計価格を算出
+ * 
+ * @param array $carts カート内の商品データ
+ * @return int $total_price カート内商品の合計価格
+ */
 function sum_carts($carts){
   $total_price = 0;
   foreach($carts as $cart){
@@ -184,6 +211,11 @@ function sum_carts($carts){
   return $total_price;
 }
 
+/**
+ * 購入商品のバリデーション
+ * 
+ * 購入商品の空チェック、ステータスチェック、在庫チェック、エラーチェック
+ */
 function validate_cart_purchase($carts){
   if(count($carts) === 0){
     set_error('カートに商品が入っていません。');

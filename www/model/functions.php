@@ -63,7 +63,7 @@ function get_file($name){
  * 
  * セッション変数がセットされていない場合、空で返す。
  * 
- * @param str $name ユーザーID
+ * @param str $name セッション変数名
  * @return str セットされているセッション変数
  */
 function get_session($name){
@@ -84,7 +84,7 @@ function set_session($name, $value){
 }
 
 /**
- * セッション変数にエラーを保存
+ * セッション変数にエラー文を配列で保存
  * 
  * @param str $error エラー文
  */
@@ -92,6 +92,11 @@ function set_error($error){
   $_SESSION['__errors'][] = $error;
 }
 
+/**
+ * セッションにセットされているエラー文を取得し、セッション変数を削除
+ * 
+ * @return array $erros エラーメッセージ配列
+ */
 function get_errors(){
   $errors = get_session('__errors');
   if($errors === ''){
@@ -101,14 +106,29 @@ function get_errors(){
   return $errors;
 }
 
+/**
+ * セッション変数にエラーが設定されていないかチェック
+ * 
+ * @return bool セッションにエラーが設定されていればtrue
+ */
 function has_error(){
   return isset($_SESSION['__errors']) && count($_SESSION['__errors']) !== 0;
 }
 
+/**
+ * セッション変数にメッセージ配列設定
+ * 
+ * @param str $message メッセージ
+ */
 function set_message($message){
   $_SESSION['__messages'][] = $message;
 }
 
+/**
+ * セッションにセットされているメッセージを取得し、セッション変数を削除
+ * 
+ * @return array $message メッセージ配列
+ */
 function get_messages(){
   $messages = get_session('__messages');
   if($messages === ''){
@@ -127,6 +147,12 @@ function is_logined(){
   return get_session('user_id') !== '';
 }
 
+/**
+ * アップロードされた画像タイプのバリデーション後、ランダムなファイル名を取得
+ * 
+ * @param str $file アップロードされた画像ファイル名
+ * @return str ランダムなファイル名と拡張子($ext)
+ */
 function get_upload_filename($file){
   if(is_valid_upload_image($file) === false){
     return '';
@@ -136,14 +162,38 @@ function get_upload_filename($file){
   return get_random_string() . '.' . $ext;
 }
 
+/**
+ * 20文字のランダムな文字列を取得
+ * 
+ * uniqidで生成した13文字の文字列をhashハッシュ化
+ * ハッシュ化した値をbase_convertで16進数から36進数へ変換
+ * 36進数へ変換した値の一部をsubstrで切り取り返す
+ * 
+ * @param str $length 生成する文字数
+ */
 function get_random_string($length = 20){
   return substr(base_convert(hash('sha256', uniqid()), 16, 36), 0, $length);
 }
 
+/**
+ * アップロードされたファイルを画像ファイルに保存
+ * 
+ * @param str $image アップロードされたファイル名
+ * @param str $filename 生成したランダムな画像ファイル名
+ * @return bool 成功すればtrue
+ */
 function save_image($image, $filename){
   return move_uploaded_file($image['tmp_name'], IMAGE_DIR . $filename);
 }
 
+/**
+ * 画像ファイルの削除
+ * 
+ * 画像ファイルが存在するかチェックし、画像ファイルを削除
+ * 
+ * @param str $filename 画像ファイル名
+ * return bool 削除に成功すればtrue
+ *  */ 
 function delete_image($filename){
   if(file_exists(IMAGE_DIR . $filename) === true){
     unlink(IMAGE_DIR . $filename);
@@ -177,6 +227,12 @@ function is_alphanumeric($string){
   return is_valid_format($string, REGEXP_ALPHANUMERIC);
 }
 
+/**
+ * 正の整数の正規表現チェック
+ * 
+ * @param $string チェックしたい文字列
+ * return 正規表現にマッチした場合true
+ */
 function is_positive_integer($string){
   return is_valid_format($string, REGEXP_POSITIVE_INTEGER);
 }
@@ -186,13 +242,21 @@ function is_positive_integer($string){
  * 
  * @param str $string チェックしたい文字列
  * @param str $format 正規表現
- * @return int 正規表現のパターンにマッチした場合は1,しなかった場合は0
+ * @return bool 正規表現のパターンにマッチした場合true
  */
 function is_valid_format($string, $format){
   return preg_match($format, $string) === 1;
 }
 
-
+/**
+ * アップロードされた画像のバリデーション
+ * 
+ * 画像かアップロードされたか確認後、画像ファイル形式を取得
+ * ファイル形式がjpgかpngであればtrue
+ * 
+ * @param str $image アップロードされた画像ファイル名
+ * @return bool
+ */
 function is_valid_upload_image($image){
   if(is_uploaded_file($image['tmp_name']) === false){
     set_error('ファイル形式が不正です。');
@@ -206,7 +270,43 @@ function is_valid_upload_image($image){
   return true;
 }
 
-
+/**
+ * エスケープ処理
+ * 
+ * @params str $string エスケープ前文字列
+ * @return str エスケープ後文字列
+ */
 function h($string){
   return htmlspecialchars($string, ENT_QUOTES, 'UTF-8');
+}
+
+/**
+ * トークンの生成
+ * 
+ * トークンを生成し、セッション変数に設定
+ * 
+ * @return str $token ランダム30文字で生成されたトークン
+ */
+function get_csrf_token(){
+  // get_random_string()はユーザー定義関数。
+  $token = get_random_string(30);
+  // set_session()はユーザー定義関数。
+  set_session('csrf_token', $token);
+  return $token;
+}
+
+/**
+ * トークンのチェック
+ * 
+ * トークンとセッション変数が一致するかチェック
+ * 
+ * @params str $token トークン
+ * @return bool トークンとセッション変数が一致していればtrue
+ */
+function is_valid_csrf_token($token){
+  if($token === '') {
+    return false;
+  }
+  // get_session()はユーザー定義関数
+  return $token === get_session('csrf_token');
 }

@@ -15,6 +15,16 @@ if(is_logined() === true){
   redirect_to(HOME_URL);
 }
 
+// hiddenで送信されたトークンを取得
+$token = get_post('csrf_token');
+// トークンのチェック
+if(is_valid_csrf_token($token) === false){
+  // 正しくなければログインページへリダイレクト
+  redirect_to(LOGIN_URL);
+}
+// セッション変数に設定したトークンを削除
+unset($_SESSION['csrf_token']);
+
 // ユーザー名を取得
 $name = get_post('name');
 // パスワードを取得
