@@ -1,3 +1,4 @@
+<?php header("X-FRAME-OPTIONS: DENY"); ?>
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -29,6 +30,7 @@
                 <?php if($item['stock'] > 0){ ?>
                   <form action="index_add_cart.php" method="post">
                     <input type="submit" value="カートに追加" class="btn btn-primary btn-block">
+                    <input type="hidden" name = "csrf_token" value="<?php print $token;?>">
                     <input type="hidden" name="item_id" value="<?php print (h($item['item_id'])); ?>">
                   </form>
                 <?php } else { ?>
