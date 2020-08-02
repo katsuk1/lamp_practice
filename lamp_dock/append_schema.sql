@@ -25,7 +25,7 @@ CREATE TABLE `purchase_histories` (
   `history_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   `total_price` int(11) NOT NULL,
-  `created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -38,7 +38,7 @@ CREATE TABLE `purchase_details` (
   `item_id` int(11) NOT NULL,
   `amount` int(11) NOT NULL,
   `price` int(11) NOT NULL,
-  `sub_total` int(11) NOT NULL,
+  `sub_total` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -90,7 +90,7 @@ ALTER TABLE `purchase_histories`
 --
 -- テーブルの制約 `purchase_details`
 --
-ALTER TABLE `purchase_details`
+ALTER TABLE `purchase_details`,
   ADD CONSTRAINT `purchase_details_ibfk_1` FOREIGN KEY (`history_id`) REFERENCES `purchase_histories` (`history_id`),
   ADD CONSTRAINT `purchase_details_ibfk_2` FOREIGN KEY (`item_id`) REFERENCES `items` (`item_id`);
 COMMIT;
