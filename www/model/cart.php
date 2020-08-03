@@ -174,10 +174,14 @@ function purchase_carts($db, $carts){
         $cart['stock'] - $cart['amount']
       ) === false){
       set_error($cart['name'] . 'の購入に失敗しました。');
+      return false;
     }
   }
-  
-  delete_user_carts($db, $carts[0]['user_id']);
+
+  if(delete_user_carts($db, $carts[0]['user_id']) === false){
+    return false;
+  }
+  return true;
 }
 
 /**

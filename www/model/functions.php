@@ -310,3 +310,13 @@ function is_valid_csrf_token($token){
   // get_session()はユーザー定義関数
   return $token === get_session('csrf_token');
 }
+
+/**
+ * 最新のinsertIDを取得
+ * 
+ * @param obj $db PDO
+ * @return int 最新のinsertID 
+ */
+function get_last_insert_id($db){
+  return $db->lastinsertid();
+}
