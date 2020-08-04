@@ -9,6 +9,8 @@ require_once MODEL_PATH . 'user.php';
 require_once MODEL_PATH . 'item.php';
 // cartデータに関する関数ファイルを読み込み
 require_once MODEL_PATH . 'cart.php';
+// historyデータに関する関数ファイルを読み込み
+require_once MODEL_PATH . 'history.php';
 
 // ログインチェックを行うため、セッションを開始する
 session_start();
@@ -38,15 +40,44 @@ $user = get_login_user($db);
 // PDOを利用してログインユーザーのカートデータを取得
 $carts = get_user_carts($db, $user['user_id']);
 
+// カート内の合計価格を取得
+$total_price = sum_carts($carts);
+
+// トランザクション開始
+$db->beginTransaction();
+
+// 購入履歴テーブルに登録
+if(insert_purchase_history($db, $user['user_id'], $total_price) === false){
+  set_error('商品の購入に失敗しました。');
+  // 失敗した場合ロールバック処理
+  $db->rollback();
+  // 失敗した場合カートページにリダイレクト
+  redirect_to(CART_URL);
+}
+
+// 最新の購入履歴IDを取得
+$history_id = get_last_insert_id($db);
+
+// 購入明細テーブルに登録
+if(for_insert_purchase_detail($db, $history_id, $carts) === false){
+  set_error('商品の購入に失敗しました。');
+  // 失敗した場合ロールバック処理
+  $db->rollback();
+  // 失敗した場合カートページにリダイレクト
+  redirect_to(CART_URL);
+}
+
 // 商品を購入し、在庫数の更新、カートから削除
 if(purchase_carts($db, $carts) === false){
   set_error('商品が購入できませんでした。');
-  // 失敗した場合、カートページへリダイレクト
+  // ロールバック処理
+  $db->rollback();
+  // 失敗した場合カートページにリダイレクト
   redirect_to(CART_URL);
 } 
+// コミット処理
+$db->commit();
 
-// カート内の合計価格を取得
-$total_price = sum_carts($carts);
 
 // ビューの読み込み
 include_once '../view/finish_view.php';
