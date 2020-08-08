@@ -36,6 +36,10 @@ define('CART_URL', '/cart.php');
 define('FINISH_URL', '/finish.php');
 // 商品管理ページのURL
 define('ADMIN_URL', '/admin.php');
+// 購入履歴ページのURL
+define('HISTORY_URL', '/history.php');
+// 購入明細ページのURL
+define('PURCHASE_DETAIL_URL', '/parchase_detail.php');
 
 // 半角英数字の正規表現
 define('REGEXP_ALPHANUMERIC', '/\A[0-9a-zA-Z]+\z/');
