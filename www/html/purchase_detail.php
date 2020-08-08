@@ -45,7 +45,7 @@ $created = get_post('created');
 $total_price = get_post('total_price');
 
 // 購入明細内の商品データを取得
-$details = get_history_details($db, $history_id);
+$details = get_purchase_details($db, $history_id);
 //var_dump($details);
 
 

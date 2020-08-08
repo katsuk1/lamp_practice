@@ -61,7 +61,7 @@ function get_all_histories($db){
  * @param int $history_id 注文ID
  * @return array 結果配列データ 
  */
-function get_history_details($db, $history_id){
+function get_purchase_details($db, $history_id){
   $sql = "
     SELECT
       purchase_details.item_id,
