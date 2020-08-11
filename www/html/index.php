@@ -23,8 +23,20 @@ $db = get_db_connect();
 // PDOを利用してログインユーザーのデータを取得
 $user = get_login_user($db);
 
+// トータルページ数を取得
+$pages_num = get_pages_num($db);
+
+// 現在のページ数を取得
+$now = get_now_page();
+
+// itemsテーブルのレコード数を取得
+$items_num = count_items_records($db);
+
+// 商品データ取得の開始位置を取得
+$start = get_limit_start($now);
+
 // 商品一覧用のデータを取得
-$items = get_open_items($db);
+$items = pagenation($db);
 
 // トークンを生成し、セッション変数に設定
 $token = get_csrf_token();

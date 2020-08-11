@@ -34,11 +34,15 @@ function get_item($db, $item_id){
 /**
  * 商品データ全てorステータスが公開の商品データを全て取得
  * 
+ * $is_openにtrueを渡せばステータスが公開の商品を取得
+ * $startを渡せば$startから8件ずつ取得
+ * 
  * @param obj $db PDO
  * @param bool $is_open フラグ
+ * @param int $start データ取得開始位置
  * @return array 結果配列データ
  */
-function get_items($db, $is_open = false){
+function get_items($db, $is_open = false, $start = ''){
   $sql = '
     SELECT
       item_id, 
@@ -53,10 +57,13 @@ function get_items($db, $is_open = false){
   if($is_open === true){
     $sql .= '
       WHERE status = 1
+      LIMIT
+        :start,
+        :max
     ';
+    $params = array(':start' => $start, ':max' => ITEMS_MAX_VIEW);
   }
-
-  return fetch_all_query($db, $sql);
+  return fetch_all_query($db, $sql, $params);
 }
 
 /**
@@ -73,10 +80,79 @@ function get_all_items($db){
  * ステータスが公開の商品データを配列で取得
  * 
  * @param obj $db PDO
+ * @param int 
  * @return array 結果配列データ
  */
-function get_open_items($db){
-  return get_items($db, true);
+function get_open_items($db, $start = ''){
+  return get_items($db, true, $start);
+}
+
+/**
+ * 商品テーブルのレコード数を取得
+ * 
+ * @param obj $db PDO
+ * @return array itemsテーブルのレコード数
+ */
+function count_items_records($db){
+  $sql = "
+    SELECT
+      COUNT(*) as 'num'
+    FROM
+      items
+  ";
+  return fetch_query($db, $sql);
+}
+
+/**
+ * 商品一覧のトータルページ数を取得
+ * 
+ * @param obj $db PDO
+ * @return int トータルページ数
+ */
+function get_pages_num($db){
+  // itemsテーブルのレコード数を取得
+  $items_num = count_items_records($db);
+  // トータルページ数を取得
+  return ceil($items_num['num'] / ITEMS_MAX_VIEW);
+}
+
+/**
+ * 商品一覧の現在のページ数を取得
+ * 
+ * @return int $now 商品一覧の現在のページ数
+ */
+function get_now_page(){
+  // 現在のページ数を取得($_GET['page_id']はURLに渡された現在のページ数)
+  if(!isset($_GET['page'])){ 
+    // 設定されていない場合は1ページ目とする
+    $now = 1;
+  }else{
+    $now = $_GET['page'];
+  }
+  return $now;
+}
+
+/**
+ * 商品データ取得の開始位置を取得
+ * 
+ */
+function get_limit_start($now){
+  return ($now - 1) * ITEMS_MAX_VIEW;
+}
+
+/**
+ * ページネーション
+ * 
+ * @param obj $db PDO
+ * @return array 商品データ配列
+ */
+function pagenation($db){
+  // 現在のページ数を取得($_GET['page_id']はURLに渡された現在のページ数)
+  $now = get_now_page();
+  //var_dump($now);
+  $start = get_limit_start($now);
+  //var_dump($start);
+  return get_open_items($db, $start);
 }
 
 /**
