@@ -65,6 +65,9 @@ define('ITEM_NAME_LENGTH_MIN', 1);
 // 商品名の最大値
 define('ITEM_NAME_LENGTH_MAX', 100);
 
+// 1ページあたりの商品表示数の最大値
+define('ITEMS_MAX_VIEW', 8);
+
 // 公開ステータス
 define('ITEM_STATUS_OPEN', 1);
 // 非公開ステータス

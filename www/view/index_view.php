@@ -14,7 +14,16 @@
   <div class="container">
     <h1>商品一覧</h1>
     <?php include VIEW_PATH . 'templates/messages.php'; ?>
-
+    <?php  ?>
+    <?php 
+      if(isset($items)){
+        if($now == $pages_num){
+          print ('<p>全件数' . (h($items_num['num'])) . '件中' . (h($start + 1)) . '〜' . (h($items_num['num'])) . '件目の商品'); 
+        }else{
+          print ('<p>全件数' . (h($items_num['num'])) . '件中' . (h($start + 1)) . '〜' . (h($start + ITEMS_MAX_VIEW)) . '件目の商品'); 
+        }
+      }
+    ?>
     <div class="card-deck">
       <div class="row">
       <?php foreach($items as $item){ ?>
@@ -43,7 +52,34 @@
       <?php } ?>
       </div>
     </div>
+    <nav aria-label="Page Navigation" class="mt-3">
+      <ul class="pagination justify-content-center">
+        <?php if($now > 1){ ?>
+          <li class="page-item">
+            <a  class="page-link" href="./index.php?page=<?php print (h($now - 1)); ?>" aria-label="Previous Page">
+              <span aria-hidden="true">&laquo;</span>
+            </a>
+          </li>
+        <?php } ?>
+        <?php
+          for($i=1; $i <= $pages_num; $i++){
+            if($i == $now){
+              print ('<li class="page-item active"><a class="page-link" href="#">' . $now . '</a></li>');
+            }else{
+              print ('<li class="page-item"><a class="page-link" href="' . './index.php?page=' . $i . '">' . $i . '</a></li>');
+            }
+          }
+        ?>
+        <?php if($pages_num > $now){ ?>
+          <li class="page-item">
+            <a  class="page-link" href="./index.php?page=<?php print (h($now + 1)); ?>" aria-label="Next Page">
+              <span aria-hidden="true">&raquo;</span>
+            </a>
+          </li>
+        <?php } ?>
+      </ul>
+    </nav>
   </div>
-  
+
 </body>
 </html>
